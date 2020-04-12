@@ -1,0 +1,34 @@
+#sign-in {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#sign-in-header {
+    padding: 30px;
+    text-align: center;
+    width: 100%;
+    background-color: #f3f3f3;
+}
+
+#sign-in-forms {
+    padding: 30px;
+    margin-top: 40px;
+    text-align: center;
+}
+
+#sign-in-forms .ant-btn {
+    width: 100%;
+}
+
+.google-connection-button .ant-btn {
+    background-color: rgb(250, 68, 71);
+    color: white;
+    border: none;
+}
+
+#no-account {
+    padding: 30px;
+}

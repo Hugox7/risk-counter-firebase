@@ -17,3 +17,15 @@ export const MODIFY_USER_FAIL = 'user/MODIFY_USER_FAIL';
 export const DELETE_USER = 'user/DELETE_USER';
 export const DELETE_USER_SUCCESS = 'user/DELETE_USER_SUCCESS';
 export const DELETE_USER_FAIL = 'user/DELETE_USER_FAIL';
+
+export const LOGIN = 'user/LOGIN';
+export const LOGIN_SUCCESS = 'user/LOGIN_SUCCESS';
+export const LOGIN_FAIL = 'user/LOGIN_FAIL';
+
+export const LOGOUT = 'user/LOGOUT';
+export const LOGOUT_SUCCESS = 'user/LOGOUT_SUCCESS';
+export const LOGOUT_FAIL = 'user/LOGOUT_FAIL';
+
+export const SIGNUP = 'user/SIGNUP';
+export const SIGNUP_SUCCESS = 'user/SIGNUP_SUCCESS';
+export const SIGNUP_FAIL = 'user/SIGNUP_FAIL';
