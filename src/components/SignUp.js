@@ -1,13 +1,24 @@
 import React from 'react';
 import { Form, Input, Button } from 'antd';
 import { Link } from 'react-router-dom';
+import { signInWithGoogle, auth, generateUserDocument } from '../config/firebase';
 
 import './signUp.css';
 
 class SignUp extends React.Component {
 
-    handleFinish = (values) => {
-        console.log('form values ', values);
+    state = {
+        error: null,
+    }
+
+    createUserWithEmailAndPasswordHandler = async (e, values) => {
+        e.preventDefault();
+        try {
+            const { user } = await auth.createUserWithEmailAndPassword(values.email, values.password);
+            generateUserDocument(user, {username: values.username});
+        } catch (error) {
+            this.setState({ error });
+        }
     }
 
     render() {
@@ -30,7 +41,7 @@ class SignUp extends React.Component {
                     <Form
                         {...layout}
                         name="signUp"
-                        onFinish={this.handleFinish}
+                        onFinish={this.createUserWithEmailAndPasswordHandler}
                         // onFinishFailed={onFinishFailed}
                         >
                         <Form.Item
@@ -67,7 +78,7 @@ class SignUp extends React.Component {
                     </Form>
                     <p>Ou</p>
                     <div className="google-connection-button">
-                        <Button>Connexion avec Google</Button>
+                        <Button onClick={signInWithGoogle}>Connexion avec Google</Button>
                     </div>
                     <p style={{ marginTop: '30px' }}>Vous avez déjà un compte ? <Link to='/'>Connectez-vous ici</Link></p>
                 </div>

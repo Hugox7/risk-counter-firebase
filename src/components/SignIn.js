@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Input, Button } from 'antd';
 import { Link } from 'react-router-dom';
+import { signInWithGoogle } from '../config/firebase';
 
 import './signIn.css';
 
@@ -64,7 +65,7 @@ class SignIn extends React.Component {
                     </Form>
                     <p style={{ fontWeight: 'bold' }}>Ou</p>
                     <div className="google-connection-button">
-                        <Button>Connexion avec Google</Button>
+                        <Button onClick={signInWithGoogle}>Connexion avec Google</Button>
                     </div>
                     <div id="no-account">
                         <p>
