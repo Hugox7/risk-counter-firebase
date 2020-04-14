@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Route, Switch} from 'react-router-dom';
+import { UserContext } from './providers/userProvider';
 
 import './App.css';
 import Home from './components/Home';
@@ -10,7 +11,7 @@ import PasswordReset from './components/PasswordReset';
 
 function App() {
 
-  let user = null;
+  let user = useContext(UserContext);
 
   if (user) {
     return (
@@ -32,8 +33,6 @@ function App() {
         </div>
     );
   }
-
-
 }
 
 export default App;

@@ -17,42 +17,48 @@ firebase.initializeApp(firebaseConfig);
 //firebase.analytics();
 
 export const auth = firebase.auth();
+export const firestore = firebase.firestore();
+
+// sign in with google
 const provider = new firebase.auth.GoogleAuthProvider();
 export const signInWithGoogle = () => {
    auth.signInWithPopup(provider);
 }
-export const firestore = firebase.firestore();
 
-//users 
-export const generateUserDocument = async (user, additionalData) => {
+// generate user document in firestore after user creation
+export const generateUserDocument = async (user, displayName) => {
     if (!user) return;
-    const userRef = firestore.doc(`users/${user.uid}`);
-    const snapshot = userRef.get();
-    if (!snapshot.exists) {
-        const { email, name } = user;
-        try {
-            await userRef.set({
-                name,
-                email,
-                ...additionalData
-              });
-        } catch (error) {
-            console.log('error creating user document ' + error);
+    const users = firestore.collection('users');
+    //const userRef = firestore.doc(`users/${user.uid}`);
+    console.log('display ', displayName);
+    console.log('user ', user);
+    
+    try {
+        await users.doc(user.user.user.uid).set({
+            username: displayName,
+            email: user.user.user.email,
+            id: user.user.user.uid
+        })
+    } catch (error) {
+        console.log('Error creating the document : ', error);
         }
-    }
-    return getUserDocument(user.uid);
+    
 }
 
-const getUserDocument = async (uid) =>  {
+// get user document for react context
+export const getUserDocument = async (uid) => {
     if (!uid) return null;
     try {
         const userDocument = await firestore.doc(`users/${uid}`).get();
         return {
             uid,
-            ...userDocument.data()
-          };
+            ...userDocument.data(),
+        }
     } catch (error) {
-        console.error("Error fetching user", error);
+
     }
+    
+
 }
+
 

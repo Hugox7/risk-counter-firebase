@@ -1,7 +1,8 @@
 import React from 'react';
-import { Form, Input, Button } from 'antd';
+import { Input, Button } from 'antd';
 import { Link } from 'react-router-dom';
-import { signInWithGoogle, auth, generateUserDocument } from '../config/firebase';
+import {  auth, generateUserDocument } from '../config/firebase';
+import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 
 import './signUp.css';
 
@@ -9,77 +10,75 @@ class SignUp extends React.Component {
 
     state = {
         error: null,
+        displayName: '',
+        email: '',
+        password: '',
     }
 
-    createUserWithEmailAndPasswordHandler = async (e, values) => {
+    componentDidMount() {
+
+    }
+
+    createUserWithEmailAndPasswordHandler = async (e, email, password, displayName) => {
         e.preventDefault();
-        try {
-            const { user } = await auth.createUserWithEmailAndPassword(values.email, values.password);
-            generateUserDocument(user, {username: values.username});
-        } catch (error) {
-            this.setState({ error });
-        }
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .then((user) => generateUserDocument({user}, displayName))
+            .then(() => this.props.history.push('/'))
+            .catch((error) => {
+                console.log(error);
+                this.setState({ error });
+            })
+
+        this.setState({ 
+            username: '',
+            email: '',
+            password: '',
+        });
+    }
+
+    handleChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
     }
 
     render() {
 
-        const layout = {
-            labelCol: { span: 8 },
-            wrapperCol: { span: 16 },
-        }
-
-        const tailLayout = {
-            wrapperCol: { offset: 8, span: 16 },
-          };
+        const { displayName, email, password } = this.state;
 
         return (
             <div id="sign-up">
-                <div id="sign-up-header">
-                    <h1>Créez votre compte</h1>
-                </div>
-                <div id="sign-up-form">
-                    <Form
-                        {...layout}
-                        name="signUp"
-                        onFinish={this.createUserWithEmailAndPasswordHandler}
-                        // onFinishFailed={onFinishFailed}
-                        >
-                        <Form.Item
-                            label="Nom d'utilisateur"
-                            style={{ width: '500px' }}
-                            name="username"
-                            rules={[{ required: true, message: "Merci d'entrer un nom d'utilisateur" }]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            label="Email"
-                            style={{ width: '500px' }}
+                <div id="sign-up-content">
+                    <h3>Créez votre compte rapidement...</h3>
+                    <form id="sign-up-form" onSubmit={(e) => this.createUserWithEmailAndPasswordHandler(e, email, password, displayName)}>
+                        <Input 
+                            placeholder="Entrez votre nom d'utilisateur"
+                            prefix={<UserOutlined className="site-form-item-icon" />}
+                            style={{ margin: '10px', width: '320px' }}
+                            onChange={this.handleChange}
+                            name="displayName"
+                            value={this.state.username}
+                        />
+                        <Input 
+                            placeholder="Entrez votre adresse email"
+                            prefix={<MailOutlined className="site-form-item-icon" />}
+                            style={{ margin: '10px', width: '320px' }}
+                            onChange={this.handleChange}
                             name="email"
-                            rules={[{ required: true, message: "Merci d'entrer une adresse mail" }]}
-                        >
-                            <Input />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Mot de passe"
-                            style={{ width: '500px' }}
+                            value={this.state.email}
+                        />
+                        <Input 
+                            placeholder="Entrez votre mot de passe"
+                            prefix={<LockOutlined className="site-form-item-icon" />}
+                            style={{ margin: '10px', width: '320px' }}
+                            onChange={this.handleChange}
                             name="password"
-                            rules={[{ required: true, message: "Merci d'entrer un mot de passe" }]}
-                        >
-                            <Input.Password />
-                        </Form.Item>
-
-                        <Form.Item {...tailLayout}>
-                            <Button type="primary" htmlType="submit">
-                            Connexion
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                    <p>Ou</p>
-                    <div className="google-connection-button">
-                        <Button onClick={signInWithGoogle}>Connexion avec Google</Button>
-                    </div>
+                            type="password"
+                            value={this.state.password}
+                        />
+                        <Button type="primary" htmlType="submit">Créez votre compte</Button>
+                    </form>
+                        
+                    
                     <p style={{ marginTop: '30px' }}>Vous avez déjà un compte ? <Link to='/'>Connectez-vous ici</Link></p>
                 </div>
             </div>
