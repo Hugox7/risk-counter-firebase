@@ -15,10 +15,6 @@ class SignUp extends React.Component {
         password: '',
     }
 
-    componentDidMount() {
-
-    }
-
     createUserWithEmailAndPasswordHandler = async (e, email, password, displayName) => {
         e.preventDefault();
 

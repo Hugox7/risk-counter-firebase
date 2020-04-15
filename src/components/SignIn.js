@@ -19,24 +19,26 @@ class SignIn extends React.Component {
 
     handleSubmit = (e, email, password) => {
         e.preventDefault();
+        this.setState({ loading: true })
         auth.signInWithEmailAndPassword(email, password)
             .catch(error => {
-                this.setState({ error })
+                this.setState({ error, loading: false });
                 console.error("Error signing in with password and email", error);
             });
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value })
+        this.setState({ [e.target.name]: e.target.value });
     }
 
     render() {
+
+        const { email, password, loading } = this.state;
 
         return (
             <div id='sign-in'>
                 <div id='sign-in-content'>
                     <img style={{ width: '300px' }} src={riskLogo} alt="risk logo" />
-                    {/* <h1 style={{ fontWeight: 'bold', margin: 0 }}>Risk Companion</h1> */}
                     <p style={{ margin: 0 }}>Pour l'édition Game of thrones Westeros</p>
                     <div id='sign-in-forms'>
                         {this.state.error ?
@@ -50,7 +52,7 @@ class SignIn extends React.Component {
                                 
                             /> : null
                         }
-                        <form className='signin-form' onSubmit={(e) => this.handleSubmit(e, this.state.email, this.state.password)}>
+                        <form className='signin-form' onSubmit={(e) => this.handleSubmit(e, email, password)}>
                             <Input 
                                 placeholder="Entrez votre email"
                                 prefix={<MailOutlined className="site-form-item-icon" />}
@@ -69,12 +71,8 @@ class SignIn extends React.Component {
                                 name="password"
                                 value={this.state.password}
                             />
-                            <Button type="primary" htmlType="submit">Connexion</Button>
+                            <Button loading={this.state.loading} type="primary" htmlType="submit">Connexion</Button>
                         </form>
-                        {/* <p style={{ fontWeight: 'bold' }}>Ou</p>
-                        <div className="google-connection-button">
-                            <Button onClick={signInWithGoogle}>Connexion avec Google</Button>
-                        </div> */}
                     </div>
                     <div id="no-account">
                         <p style={{ textAlign: 'center' }}>

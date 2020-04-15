@@ -8,6 +8,7 @@
 
 #sign-in-content {
     display: flex;
+    position: relative;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -16,6 +17,7 @@
     padding: 10px;
     border-radius: 5px;
     opacity: 0.95;
+    overflow: hidden;
 
 }
 

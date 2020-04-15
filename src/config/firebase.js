@@ -25,13 +25,10 @@ export const signInWithGoogle = () => {
    auth.signInWithPopup(provider);
 }
 
-// generate user document in firestore after user creation
+// generate user document in firestore after user creation and update displayName
 export const generateUserDocument = async (user, displayName) => {
     if (!user) return;
     const users = firestore.collection('users');
-    //const userRef = firestore.doc(`users/${user.uid}`);
-    console.log('display ', displayName);
-    console.log('user ', user);
     
     try {
         await users.doc(user.user.user.uid).set({
@@ -42,6 +39,8 @@ export const generateUserDocument = async (user, displayName) => {
     } catch (error) {
         console.log('Error creating the document : ', error);
         }
+    
+    await updateDisplayName(displayName);
     
 }
 
@@ -57,8 +56,32 @@ export const getUserDocument = async (uid) => {
     } catch (error) {
 
     }
-    
-
 }
+
+const updateDisplayName = async (displayName) => {
+    const user = auth.currentUser;
+    await user.updateProfile({
+        displayName,
+    });
+}
+
+//get user games
+export const getUserGames = async (uid) => {
+    const userGames = await firestore.collection('users').doc(uid).collection('games').get();
+    if (!userGames) return [];
+    let games = [];
+    userGames.forEach(game => games.push(game.data()));
+    return games;
+ }
+
+ //get all users
+ export const getUsers = async () => {
+     const dbUsers = await firestore.collection('users').get();
+     if (!dbUsers) return [];
+     let users = [];
+     dbUsers.forEach(user => users.push(user.data()));
+     return users;
+
+ }
 
 

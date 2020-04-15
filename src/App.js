@@ -7,6 +7,8 @@ import Home from './components/Home';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import PasswordReset from './components/PasswordReset';
+import User from './components/User';
+import Game from './components/Game';
 
 
 function App() {
@@ -18,6 +20,8 @@ function App() {
         <div className='App'>
             <Switch>
                 <Route exact path='/' component={Home} />
+                <Route path='/user/:id' component={User} />
+                <Route path='/game/:id' component={Game} />
             </Switch>
         </div>
       
