@@ -54,7 +54,7 @@ export const getUserDocument = async (uid) => {
             ...userDocument.data(),
         }
     } catch (error) {
-
+        console.log(error);
     }
 }
 
@@ -86,7 +86,41 @@ export const getUserGames = async (uid) => {
     return response;
  }
 
- // send notification to user
- 
+ // send friend request to user
+ export const sendFriendRequest = async (uid, content) => {   
+        await firestore.collection('users')
+            .doc(uid)
+            .collection('notifications')
+            .add(content)
+   
+ }
+
+ //get user notifications
+ export const getUserNotifications = async (uid) => {
+     let notifications = await firestore.collection('users')
+        .doc(uid)
+        .collection('notifications')
+        .get();
+    if (!notifications) return [];
+    let notifArray = [];
+    notifications.forEach(notif => {
+        return notifArray.push(notif.data());
+    });
+    return notifArray;
+ }
+
+ // get user friends
+ export const getUserFriends = async (uid) => {
+     let friends = await firestore.collection('users')
+        .doc(uid)
+        .collection('friends')
+        .get();
+    if (!friends) return [];
+    let friendsArray = [];
+    friends.forEach(friend => {
+        return friendsArray.push(friend.data());
+    })
+    return friendsArray;
+ }
 
 

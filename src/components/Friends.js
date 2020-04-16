@@ -1,7 +1,14 @@
 import React from 'react';
 import { UserContext } from '../providers/userProvider';
-import { getUserDocument, getUserQuery } from '../config/firebase';
-import { Col, Row, Input, Avatar, Button, Tooltip } from 'antd';
+import { 
+    getUserDocument, 
+    getUserQuery, 
+    sendFriendRequest,
+    getUserFriends,
+    getUserNotifications,
+    firestore 
+} from '../config/firebase';
+import { Col, Row, Input, Avatar, Button, Tooltip, Popconfirm, message } from 'antd';
 import { UserOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 
 import './friends.css';
@@ -13,12 +20,29 @@ class Friends extends React.Component {
         user: null,
         value: '',
         userFromQuery: null,
+        error: null,
+        notifSentCheck: false,
+        notifReceivedCheck: false,
+        friends: [],
+        notifs: [],
     }
 
     async componentDidMount() {
         const userId = this.context.uid;
         const user = await getUserDocument(userId);
-        this.setState({ user });
+        const notifs = await getUserNotifications(userId);
+        const friends = await getUserFriends(userId);
+
+        this.setState({ user, friends, notifs }, () => console.log(this.state));
+    }
+
+    componentDidUpdate = async (prevProps, prevState) => {
+        if (prevState.userFromQuery !== this.state.userFromQuery) {
+            this.setState({ 
+                notifSentCheck: await this.checkIfNotificationHasBeenSent(),
+                notifReceivedCheck: await this.checkIfNotificationHasBeenReceived(),
+            }, () => console.log(this.state));
+        }
     }
 
     handleChange = async (e) => {        
@@ -36,9 +60,63 @@ class Friends extends React.Component {
         }   
     }
 
+    handleAddFriend = async (e) => {
+        e.preventDefault();
+        const { userFromQuery, user } = this.state;
+        try {
+            await sendFriendRequest(userFromQuery[0].id, {
+                title: "Nouvelle demande d'ami",
+                description: `Acceptez vous la demande d'ami de ${user.username} ?`,
+                isRead: false,
+                idAsker: user.id,
+                friend: true,
+            });
+            this.setState({ userFromQuery: null, value: '' });
+            message.info(`La demande a bien été envoyée à ${userFromQuery[0].username}`)
+        } catch (error) {
+            console.log(error);
+            this.setState({ error });
+        }
+    }
+
+    checkIfNotificationHasBeenSent = async () => {
+        const { user, userFromQuery } = this.state;
+        if (userFromQuery) {
+            let snapshot = await firestore.collection('users')
+            .doc(userFromQuery[0].id)
+            .collection('notifications')
+            .where('idAsker', '==', user.id)
+            .get()
+
+            if (snapshot.docs.length) {
+                return true;
+            } else {
+                return false;
+            }  
+
+        }
+        else {
+            return false;
+        }
+    }
+
+    checkIfNotificationHasBeenReceived = async () => {
+        const { user, userFromQuery, notifs } = this.state;
+        if (userFromQuery) {
+            let check = notifs.find(notif => notif.idAsker === userFromQuery[0].id);
+            if (check) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     render() {
 
-        const {user} = this.state;
+        const {user, userFromQuery} = this.state;
         const profilePic = user && user.picture ? user.picture : <UserOutlined />;
 
         return (
@@ -62,7 +140,9 @@ class Friends extends React.Component {
                                     xs={{ span: 24, offset: 0 }}
                                 >
                                     <div id="current-friends">
-                                        1
+                                        {!this.state.friends.length && 
+                                            <p>Vous n'avez pas encore d'amis</p>
+                                        }
                                     </div>
                                 </Col>
                                 <Col
@@ -85,15 +165,29 @@ class Friends extends React.Component {
                                             <div id='response-card'>
                                                 <div>
                                                     <Avatar className="avatar" size={32} icon={profilePic} />
-                                                    <p>{this.state.userFromQuery[0].username}</p>
+                                                    <p>{userFromQuery[0].username}</p>
                                                 </div>
-                                                <Tooltip title="Ajouter comme ami">
-                                                    <Button
-                                                        icon={<UsergroupAddOutlined />}
-                                                    />
-                                                </Tooltip>
-                                            </div>
-                                             
+                                                {!this.state.notifSentCheck && userFromQuery[0].id !== user.id ?
+                                                    <Popconfirm 
+                                                    title={`Voulez-vous ajouter ${userFromQuery[0].username} comme ami ?`}
+                                                    onConfirm={this.handleAddFriend}
+                                                    okText="Oui"
+                                                    cancelText="Non"
+                                                    >
+                                                        <Button
+                                                            icon={<UsergroupAddOutlined />}
+                                                        />
+                                                    </Popconfirm>
+                                                    : 
+                                                    <Tooltip title="Vous êtes déjà amis, une notification a déjà été envoyée, ou c'est votre propre compte">
+                                                        <Button
+                                                            icon={<UsergroupAddOutlined />}
+                                                            disabled
+                                                        />
+                                                    </Tooltip>
+                                                }                                           
+                                                
+                                            </div>  
                                         }
                                     </div>
                                 </Col>

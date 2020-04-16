@@ -1,5 +1,5 @@
 import React from 'react';
-import { Drawer, Avatar, Button, Tooltip, icon } from 'antd';
+import { Drawer, Avatar, Button, Tooltip, icon, Badge } from 'antd';
 import { Link } from 'react-router-dom';
 import { 
     UserOutlined, 
@@ -12,9 +12,10 @@ import { auth } from '../config/firebase';
 
 import './profileDrawer.css';
 
-const ProfileDrawer = ({ user, onClose, visible }) => {
+const ProfileDrawer = ({ user, onClose, visible, notifs }) => {
 
     const profilePic = user && user.picture ? user.picture : <UserOutlined />;
+    const count = notifs.filter(notif => notif.isRead === false).length;
     
     return (
         <Drawer
@@ -29,12 +30,14 @@ const ProfileDrawer = ({ user, onClose, visible }) => {
             <hr style={{ marginTop: '25px' }} />
             <div id="drawer-links">
                 <div>
-                    <NotificationOutlined className='menu-icon' />
-                    <Link><p>Notifications</p></Link>
+                    <Badge dot count={count}>
+                        <NotificationOutlined className='menu-icon' />
+                    </Badge>
+                    <Link to="/"><p>Notifications</p></Link>
                 </div>
                 <div>
                     <MessageOutlined className='menu-icon' />
-                    <Link><p>Messages</p></Link>
+                    <Link to="/"><p>Messages</p></Link>
                 </div>
                 <div>
                     <UserOutlined className='menu-icon' />

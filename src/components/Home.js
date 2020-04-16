@@ -1,8 +1,8 @@
 import React from 'react';
-import { getUserDocument, getUserGames } from '../config/firebase';
+import { getUserDocument, getUserGames, getUserNotifications } from '../config/firebase';
 import { UserContext } from '../providers/userProvider';
 import { LoadingOutlined, UserOutlined, PlusOutlined, MenuOutlined } from '@ant-design/icons';
-import { Spin, Button, Row, Col, Tooltip, Avatar } from 'antd';
+import { Spin, Button, Row, Col, Tooltip, Avatar, Badge } from 'antd';
 import { Link } from 'react-router-dom';
 
 import './home.css';
@@ -17,13 +17,15 @@ class Home extends React.Component {
         games: [],
         showModal: false,
         showDrawer: false,
+        notifs: [],
     }
 
     async componentDidMount() {
         const userId = this.context.uid;
         const user = await getUserDocument(userId);
         const games = await getUserGames(userId);
-        this.setState({ user, games });
+        const notifs = await getUserNotifications(userId);
+        this.setState({ user, games, notifs });
         console.log(this.state);
     } 
 
@@ -45,11 +47,13 @@ class Home extends React.Component {
     
     render() {
 
-        const { user, games } = this.state;
+        const { user, games, notifs } = this.state;
         const antIcon = <LoadingOutlined style={{ fontSize: 90 }} spin />;
-        const profilePic = user && user.picture ? user.picture : <UserOutlined />;
 
         if (user) {
+
+            const count = this.state.notifs.filter(notif => notif.isRead === false).length;
+
             return (
                 <div id="home">
                     <Row>
@@ -57,17 +61,20 @@ class Home extends React.Component {
                             <div id="home-header">
                                 <h2>{`Welcome ${user.username}`}</h2>
                                 <div>
-                                    <Button  
-                                        type="primary"
-                                        shape="circle"
-                                        icon={<MenuOutlined />}
-                                        className="menu-button"
-                                        onClick={this.handleShowDrawer}
-                                    />
+                                    <Badge count={count}>
+                                        <Button  
+                                            type="primary"
+                                            shape="circle"
+                                            icon={<MenuOutlined />}
+                                            className="menu-button"
+                                            onClick={this.handleShowDrawer}
+                                        />
+                                    </Badge>
                                     <ProfileDrawer 
                                         onClose={this.handleHideDrawer}
                                         visible={this.state.showDrawer}
                                         user={user}
+                                        notifs={notifs}
                                     />
                                 </div>
                             </div>

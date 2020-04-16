@@ -14,11 +14,14 @@
 
 #drawer-links div {
     display: flex;
+    align-items: center;
+    padding: 10px 0;
 }
 
 #drawer-links p {
     color: #3A3E49;
     font-size: 18px;
+    margin: 0 10px;
 }
 
 .signout-button {
@@ -31,10 +34,4 @@
 .signout-button:hover {
     background-color: #D92738;
     border: none;
-}
-
-.menu-icon {
-    font-size: 20px;
-    margin-top: 4px; 
-    margin-right: 10px;
 }
