@@ -74,14 +74,19 @@ export const getUserGames = async (uid) => {
     return games;
  }
 
- //get all users
- export const getUsers = async () => {
-     const dbUsers = await firestore.collection('users').get();
-     if (!dbUsers) return [];
-     let users = [];
-     dbUsers.forEach(user => users.push(user.data()));
-     return users;
-
+ //get user from query search
+ export const getUserQuery = async (query) => {
+    let response = [];
+    let snapshot = await firestore.collection('users').where('username', '==', query).get();
+    if (snapshot.docs.length) {
+        snapshot.docs.forEach(doc => {
+            return response.push(doc.data());
+        });
+    }
+    return response;
  }
+
+ // send notification to user
+ 
 
 

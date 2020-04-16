@@ -1,0 +1,40 @@
+#drawer-header {
+    display: flex;
+    align-items: center;
+}
+
+#drawer-header h2 {
+    font-weight: bold;
+    margin: 0 0 0 10px;
+}
+
+#drawer-links {
+    margin-top: 25px;
+}
+
+#drawer-links div {
+    display: flex;
+}
+
+#drawer-links p {
+    color: #3A3E49;
+    font-size: 18px;
+}
+
+.signout-button {
+    background-color: #D92738;
+    border: none;
+    height: 37px;
+    width: 37px;
+}
+
+.signout-button:hover {
+    background-color: #D92738;
+    border: none;
+}
+
+.menu-icon {
+    font-size: 20px;
+    margin-top: 4px; 
+    margin-right: 10px;
+}

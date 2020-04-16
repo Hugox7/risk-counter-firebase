@@ -1,12 +1,13 @@
 import React from 'react';
-import { auth, getUserDocument, getUserGames, getUsers } from '../config/firebase';
+import { getUserDocument, getUserGames } from '../config/firebase';
 import { UserContext } from '../providers/userProvider';
-import { LoadingOutlined, UserOutlined, PlusOutlined } from '@ant-design/icons';
+import { LoadingOutlined, UserOutlined, PlusOutlined, MenuOutlined } from '@ant-design/icons';
 import { Spin, Button, Row, Col, Tooltip, Avatar } from 'antd';
 import { Link } from 'react-router-dom';
 
 import './home.css';
 import NewGameModal from './NewGameModal';
+import ProfileDrawer from './ProfileDrawer';
 
 class Home extends React.Component {
     static contextType = UserContext;
@@ -14,7 +15,7 @@ class Home extends React.Component {
     state = {
         user: null,
         games: [],
-        users: [],
+        showModal: false,
         showDrawer: false,
     }
 
@@ -22,10 +23,17 @@ class Home extends React.Component {
         const userId = this.context.uid;
         const user = await getUserDocument(userId);
         const games = await getUserGames(userId);
-        const users = await getUsers();
-        this.setState({ user, games, users });
+        this.setState({ user, games });
         console.log(this.state);
     } 
+
+    handleShowModal = () => {
+        this.setState({ showModal: true });
+    }
+
+    handleHideModal = () => {
+        this.setState({ showModal: false });
+    }
 
     handleShowDrawer = () => {
         this.setState({ showDrawer: true });
@@ -37,7 +45,7 @@ class Home extends React.Component {
     
     render() {
 
-        const { user, games, users } = this.state;
+        const { user, games } = this.state;
         const antIcon = <LoadingOutlined style={{ fontSize: 90 }} spin />;
         const profilePic = user && user.picture ? user.picture : <UserOutlined />;
 
@@ -49,11 +57,18 @@ class Home extends React.Component {
                             <div id="home-header">
                                 <h2>{`Welcome ${user.username}`}</h2>
                                 <div>
-                                    <Tooltip title="Mon profil">
-                                        <Link to={`/user/${user.id}`}>
-                                            <Avatar className="avatar" size={64} icon={profilePic} />
-                                        </Link>
-                                    </Tooltip>
+                                    <Button  
+                                        type="primary"
+                                        shape="circle"
+                                        icon={<MenuOutlined />}
+                                        className="menu-button"
+                                        onClick={this.handleShowDrawer}
+                                    />
+                                    <ProfileDrawer 
+                                        onClose={this.handleHideDrawer}
+                                        visible={this.state.showDrawer}
+                                        user={user}
+                                    />
                                 </div>
                             </div>
                         </Col>
@@ -64,14 +79,14 @@ class Home extends React.Component {
                                 icon={<PlusOutlined />} 
                                 className="new-game-button" 
                                 type="primary"
-                                onClick={this.handleShowDrawer}
+                                onClick={this.handleShowModal}
                             >
                                 Nouvelle partie
                             </Button>
                             <NewGameModal 
-                                visible={this.state.showDrawer}
-                                onClose={this.handleHideDrawer}
-                                users={users}
+                                visible={this.state.showModal}
+                                onClose={this.handleHideModal}
+                                user={user}
                             />
                         </Col>
                     </Row>
@@ -103,7 +118,7 @@ class Home extends React.Component {
                             xs={{ span: 22, offset: 1 }}
                         >
                             <div className="games">
-                            <h3>Mes parties terminées</h3>
+                                <h3>Mes parties terminées</h3>
                                 
                             </div>
                         </Col>

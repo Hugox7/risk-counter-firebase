@@ -13,10 +13,9 @@
 
 #home-header {
     min-height: 80px;
-    padding: 15px;
     border-radius: 5px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
 }
@@ -47,7 +46,7 @@
     justify-content: space-between;
 }
 
-.new-game-button {
+/* .new-game-button {
     background-color: #D92738;
     border: #D92738 solid 1px;
 }
@@ -55,7 +54,7 @@
 .new-game-button:hover {
     background-color: #D92738;
     border: #D92738 solid 1px;
-}
+} */
 
 #current-games-content {
    min-height: 400px;
@@ -63,5 +62,10 @@
    display: flex;
    justify-content: center;
    align-items: center;
+}
+
+.menu-button {
+    height: 45px;
+    width: 45px;
 }
 

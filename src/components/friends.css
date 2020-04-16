@@ -1,0 +1,45 @@
+#my-friends {
+    height: 100%;
+}
+
+#my-friends-content {
+    min-height: 600px;
+    background-color: white;
+    margin-top: 40px;
+    border-radius: 5px;
+}
+
+#search-users {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f3f3f3;
+    height: 100%;
+}
+
+#search-users h2 {
+    margin-bottom: 15px;
+}
+
+#response-card {
+    width: 100%;
+    background-color: white;
+    border-radius: 5px;
+    height: 50px;
+    margin-top: 10px;
+    display: flex;
+    padding: 5px 15px;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+#response-card p {
+    margin: 0 0 0 10px;
+}
+
+#response-card div {
+    display: flex;
+}
