@@ -1,0 +1,24 @@
+#user {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#update-profile {
+    background-color: white;
+    height: 600px;
+    width: 500px;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+#update-profile-pic {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#update-username {
+    margin-top: 50px;
+}
