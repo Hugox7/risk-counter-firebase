@@ -13,17 +13,18 @@ class SignUp extends React.Component {
         displayName: '',
         email: '',
         password: '',
+        loading: false,
     }
 
     createUserWithEmailAndPasswordHandler = async (e, email, password, displayName) => {
         e.preventDefault();
-
+        this.setState({ loading: true });
         auth.createUserWithEmailAndPassword(email, password)
             .then((user) => generateUserDocument({user}, displayName))
             .then(() => this.props.history.push('/'))
             .catch((error) => {
                 console.log(error);
-                this.setState({ error });
+                this.setState({ error, loading: false });
             })
 
         this.setState({ 
@@ -71,7 +72,7 @@ class SignUp extends React.Component {
                             type="password"
                             value={this.state.password}
                         />
-                        <Button type="primary" htmlType="submit">Créez votre compte</Button>
+                        <Button loading={this.state.loading} type="primary" htmlType="submit">Créez votre compte</Button>
                     </form>
                         
                     

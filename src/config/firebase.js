@@ -1,4 +1,5 @@
 import firebase from "firebase/app";
+import { message } from "antd";
 require("firebase/auth");
 require("firebase/firestore");
 
@@ -87,11 +88,19 @@ export const getUserGames = async (uid) => {
  }
 
  // send friend request to user
- export const sendFriendRequest = async (uid, content) => {   
-        await firestore.collection('users')
+ export const sendFriendRequest = async (uid, content) => {
+     try {
+        let notif  = await firestore.collection('users')
             .doc(uid)
             .collection('notifications')
-            .add(content)
+            .add(content);
+        await notif.update({
+            id: notif.id,
+        });
+     } catch (error) {
+         console.log(error);
+     }
+        
    
  }
 
@@ -121,6 +130,29 @@ export const getUserGames = async (uid) => {
         return friendsArray.push(friend.data());
     })
     return friendsArray;
+ }
+
+ // accept friend request
+ export const acceptFriendRequest = async (userId, friendId, user) => {
+    const userRef = firestore.collection('users'); 
+    const friend = await userRef.doc(friendId).get();
+    await userRef.doc(userId).collection('friends')
+        .add({ ...friend.data() });
+    await userRef.doc(friendId).collection('friends')
+        .add({ ...user });
+    message.info(`Vous et ${friend.data().username} êtes maintenant amis`)      
+ }
+
+
+
+ // delete notification
+ export const deleteNotification = async (userId, notifId) => {
+     try {
+        await firestore.collection('users').doc(userId).collection('notifications')
+            .doc(notifId).delete();
+     } catch (error) {
+        console.log(error);
+     }
  }
 
 
