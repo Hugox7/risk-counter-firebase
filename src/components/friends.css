@@ -3,11 +3,11 @@
 }
 
 #my-friends-content {
-    min-height: 600px;
+    height: 600px;
     background-color: white;
     margin-top: 70px;
     border-radius: 5px;
-    overflow: hidden;
+    /*overflow: hidden;*/
 }
 
 #search-users {
@@ -36,6 +36,9 @@
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
+    overflow-y: scroll;
+    width: 100%;
+    
 }
 
 #current-friends-header {

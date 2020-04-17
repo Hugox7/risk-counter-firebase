@@ -14,6 +14,7 @@ import { Col, Row, Input, Avatar, Button, Tooltip, Popconfirm, message, Divider 
 import { UserOutlined, UsergroupAddOutlined, RollbackOutlined } from '@ant-design/icons';
 
 import './friends.css';
+import FriendCard from './FriendCard';
 
 class Friends extends React.Component {
     static contextType = UserContext;
@@ -272,7 +273,10 @@ class Friends extends React.Component {
                                         </div>
                                         <div id="current-friends-content">
                                             {this.state.friends.length ?
-                                                <p>friends</p> : null
+                                                this.state.friends.map(friend => {
+                                                    return <FriendCard key={friend.id} friend={friend} pic={profilePic} />
+                                                })
+                                                : null
                                             }
                                         </div>
                                     </div>
