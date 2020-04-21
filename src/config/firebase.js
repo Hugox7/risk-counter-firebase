@@ -2,6 +2,7 @@ import firebase from "firebase/app";
 import { message } from "antd";
 require("firebase/auth");
 require("firebase/firestore");
+require('firebase/storage');
 
 export const firebaseConfig = {
     apiKey: process.env.REACT_APP_APIKEY,
@@ -138,9 +139,9 @@ export const getUserGames = async (uid) => {
     const userRef = firestore.collection('users'); 
     const friend = await userRef.doc(friendId).get();
     await userRef.doc(userId).collection('friends')
-        .add({ ...friend.data() });
+        .add({ id: friend.data().id });
     await userRef.doc(friendId).collection('friends')
-        .add({ ...user });
+        .add({ id: user.id });
     message.info(`Vous et ${friend.data().username} êtes maintenant amis`)      
  }
 
@@ -154,6 +155,22 @@ export const getUserGames = async (uid) => {
      } catch (error) {
         console.log(error);
      }
+ }
+
+ //update profile pic
+ export const updateProfilePic = async (url) => {
+    const user = auth.currentUser;
+    const userRef = firestore.collection('users').doc(user.uid);
+    try {
+        await user.updateProfile({
+            photoURL: url,
+        });
+        await userRef.update({
+            picture: url,
+        });
+    } catch (error) {
+        console.log(error);
+    }
  }
 
 

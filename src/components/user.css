@@ -10,15 +10,26 @@
     height: 600px;
     width: 500px;
     border-radius: 5px;
-    padding: 20px;
+    overflow: hidden;
 }
 
 #update-profile-pic {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 20px 20px;
 }
 
 #update-username {
-    margin-top: 50px;
+    margin-top: 30px;
+    padding: 0px 20px;
+}
+
+#update-profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f3f3f3;
+    overflow: hidden;
 }

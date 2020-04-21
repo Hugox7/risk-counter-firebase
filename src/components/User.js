@@ -1,6 +1,6 @@
 import React from 'react';
-import { Tooltip, Button, Upload, message, Avatar, Input } from 'antd';
-import { getUserDocument, auth } from '../config/firebase';
+import { Tooltip, Button, message, Avatar, Input } from 'antd';
+import { getUserDocument, storage, updateProfilePic } from '../config/firebase';
 import {  UploadOutlined, UserOutlined } from '@ant-design/icons';
 import { UserContext } from '../providers/userProvider';
 
@@ -13,6 +13,9 @@ class User extends React.Component {
     state = {
         user: null,
         userValue: '',
+        image: null,
+        url: '',
+        error: null,
     }
 
     async componentDidMount() {
@@ -24,10 +27,55 @@ class User extends React.Component {
         });
     }
 
-    uploadProfilePic = () => {
-        // let updated = await auth.currentUser.updateProfile({
+    async componentDidUpdate(prevProps, prevState) {
+        if (prevState.url !== this.state.url) {
+            await updateProfilePic(this.state.url);
+            this.setState({ user: await getUserDocument(this.state.user.id) });
+        }
+    }
 
-        // })
+    handleProfilePicUpload = () => {
+        const { image, user } = this.state;
+        if (image) {
+            const uploadTask = storage.ref(`/profilePics/${user.id}/${image.name}`).put(image);
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    // progress function
+
+                }, 
+                (error) => {
+                    // error function
+                    console.log(error);
+                    this.setState({ error });
+                }, 
+                (complete) => {
+                    // complete function
+                    storage.ref(`profilePics/${user.id}/${image.name}`).getDownloadURL().then(url => {
+                        console.log(url);
+                        this.setState({ url });
+                        message.info('Votre photo de profil a été correctement modifiée');
+                    })
+                    // .then(async () => {
+                    //     let picturesToDelete = await storage.ref(`profilePics/${user.id}`).listAll();
+                    //     picturesToDelete.items.slice(1).forEach(item => {
+                    //         storage.ref(item.location.path).delete();
+                    //     });
+                        
+                    // })
+                },
+            );
+        } else {
+            return;
+        }
+    }
+
+    handleChange = (e) => {
+        const image = e.target.files[0];
+        if (image) {
+            this.setState({ image });
+        }
+        
+       
     }
 
     
@@ -35,42 +83,42 @@ class User extends React.Component {
 
         const { user } = this.state;
 
-        const props = {
-            name: 'file',
-            action: this.uploadProfilePic,
-            headers: {
-              authorization: 'authorization-text',
-            },
-            onChange(info) {
-                if (info.file.status !== 'uploading') {
-                    console.log(info.file, info.fileList);
-                }
-                if (info.file.status === 'done') {
-                    message.success(`${info.file.name} file uploaded successfully`);
-                } else if (info.file.status === 'error') {
-                    message.error(`${info.file.name} file upload failed.`);
-                }
-            },
-        };
-
-        
-
         if (user) {
 
-            const profilePic = user.picture ? user.picture : <UserOutlined />;
+            const profilePic = user.picture 
+                ? <Avatar size={120} src={user.picture} style={{ marginLeft: '10px' }} />
+                : <Avatar size={120} icon={<UserOutlined />} style={{ marginLeft: '10px' }} />;
+           
 
             return (
                 <div id="user">
                     <div id="update-profile">
-                        <h2>Modifiez votre profil</h2>
-                        <div id='update-profile-pic'>
-                            <Upload {...props}>
-                                <Button>
-                                    <UploadOutlined /> Click to Upload
-                                </Button>
-                            </Upload>
-                            <Avatar size={120} icon={profilePic} style={{ marginLeft: '10px' }} />
+                        <div id='update-profile-header'>
+                            <h2>Modifiez votre profil</h2>
+                            <Button
+                                onClick={() => this.props.history.push('/')}
+                            >
+                                Retour
+                            </Button>
                         </div>
+                        <div id='update-profile-pic'>
+                            <form>
+                                <input 
+                                    type="file" 
+                                    onChange={this.handleChange}
+                                />
+                                <Button
+                                    onClick={this.handleProfilePicUpload}
+                                    style={{ marginTop: '10px' }}
+                                    type="primary"
+                                    icon={<UploadOutlined />}
+                                >
+                                    Modifier
+                                </Button>
+                            </form>
+                            {profilePic}
+                        </div>
+                        <hr style={{ margin: '20px 20px' }} />
                         <div id='update-username'>
                             <form style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
                                 <div>

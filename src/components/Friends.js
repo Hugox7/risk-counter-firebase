@@ -274,7 +274,9 @@ class Friends extends React.Component {
                                         <div id="current-friends-content">
                                             {this.state.friends.length ?
                                                 this.state.friends.map(friend => {
-                                                    return <FriendCard key={friend.id} friend={friend} pic={profilePic} />
+
+
+                                                    return <FriendCard key={friend.id} id={friend.id} />
                                                 })
                                                 : null
                                             }

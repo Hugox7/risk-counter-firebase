@@ -14,7 +14,10 @@ import './profileDrawer.css';
 
 const ProfileDrawer = ({ user, onClose, visible, notifs }) => {
 
-    const profilePic = user && user.picture ? user.picture : <UserOutlined />;
+    const profilePic = user.picture 
+        ? <Avatar size={100} src={user.picture} style={{ marginLeft: '10px' }} />
+        : <Avatar size={100} icon={<UserOutlined />} style={{ marginLeft: '10px' }} />;
+
     const count = notifs.filter(notif => notif.isRead === false).length;
     
     return (
@@ -24,7 +27,7 @@ const ProfileDrawer = ({ user, onClose, visible, notifs }) => {
             width={350}
         >   
             <div id="drawer-header">
-                <Avatar className="avatar" size={64} icon={profilePic} />
+                {profilePic}
                 <h2>{user.username}</h2>
             </div>
             <hr style={{ marginTop: '25px' }} />

@@ -1,14 +1,31 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Avatar, Button, Popconfirm } from 'antd';
-import { MessageOutlined, DeleteOutlined } from '@ant-design/icons';
+import { firestore } from '../config/firebase';
+import { MessageOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 
 import './friendCard.css';
 
-const FriendCard = ({ friend, pic }) => {
+const FriendCard = ({ id }) => {
+
+    const [friend, setFriend] = useState({});
+
+    useEffect(() => {
+        const fetchData = async () => {
+            let friend = await firestore.collection('users').doc(id).get();
+            setFriend(friend.data());
+        }
+        fetchData();
+    }, []);
+
+
+    const pic = friend.picture 
+        ? <Avatar size={80} src={friend.picture} /> 
+        : <Avatar size={80} icon={<UserOutlined />} />;
+
     return (
         <div id='friend-card'>
             <div id="friend-card-header">
-                <Avatar size={80} icon={pic} />
+                {pic}
                 <div>
                     <h3>{friend.username}</h3>
                     <p>{friend.email}</p>
