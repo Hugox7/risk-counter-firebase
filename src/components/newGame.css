@@ -28,6 +28,11 @@
     padding: 20px;
 }
 
+.ant-modal-body {
+    min-height: 150px !important;
+    background-color: #f3f3f3;
+}
+
 #new-game-form .ant-card-body {
     padding: 10px 20px;
     height: 60px;
@@ -54,6 +59,43 @@
     bottom: 20px;
     right: 20px;
 }
+
+#game-current-players {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#current-player-card {
+    height: 80px;
+    padding: 20px;
+    width: 190px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    margin: 20px;
+    background-color: #f3f3f3;
+    position: relative;
+    box-shadow: 5px 5px 10px lightgrey;
+}
+#current-player-card h2, #current-player-card p {
+    margin: 0;
+}
+
+#query-result {
+    background-color: white;
+    height: 35px;
+    border-radius: 5px;
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 
 
     

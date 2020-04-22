@@ -1,9 +1,10 @@
 import React from 'react';
-import { Button, Card, Modal, Tooltip } from 'antd';
-import { StepForwardOutlined, RollbackOutlined } from '@ant-design/icons';
+import { v4 as uuidv4 } from 'uuid';
+import { Button, Card, Modal, Input } from 'antd';
+import { StepForwardOutlined, RollbackOutlined, DeleteOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { UserContext } from '../providers/userProvider';
-import { getUserDocument } from '../config/firebase';
+import { getUserDocument, getUserFriends, firestore } from '../config/firebase';
 import * as gameTypes from '../store/types/game';
 
 import './newGame.css';
@@ -19,37 +20,66 @@ class NewGame extends React.Component {
 
     state = {
         remainingFactions: [
-            {
+            {   
+                id: 1,
                 name: 'Stark',
-                color: 'grey',
+                color: '#8B847D',
                 pic: stark,
             },{
+                id: 2,
                 name: 'Lannister',
-                color: 'yellow',
+                color: '#EEC244',
                 pic: lannister,
             },{
+                id: 3,
                 name: 'Baratheon',
                 color: 'black',
                 pic: baratheon,
             },{
+                id: 4,
                 name: 'Tyrell',
-                color: 'green',
+                color: '#AFD98C',
                 pic: tyrell,
-            },{
+            },
+            {
+                id: 5,
                 name: 'Martell',
-                color: 'brown',
+                color: '#B15F3E',
                 pic: martell,
             }
         ],
         visible: false,
         user: null,
         factionClicked: {},
+        value: '',
+        friends: [],
+        friendsWithInfos: [],
+        friendFromQuery: null,
+        loading: false,
     }
 
     async componentDidMount() {
         const userId = this.context.uid;
         const user = await getUserDocument(userId);
-        this.setState({ user });
+        const friends = await getUserFriends(userId);
+        this.setState({ user, friends });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.friends !== this.state.friends) {
+            let friendsWithInfos = [];
+            this.state.friends.forEach(async friend => {
+                const user = await firestore.collection('users').doc(friend.id).get();
+                friendsWithInfos.push(user.data());
+            });
+            this.setState({ friendsWithInfos }, () => console.log(this.state));
+        }
+    }
+
+    componentWillUnmount() {
+        this.props.game.forEach(player => {
+            this.props.removePlayer(player.id);
+        })
     }
 
     handleShowModal = (faction) => {
@@ -64,8 +94,11 @@ class NewGame extends React.Component {
         const { factionClicked, user } = this.state;
         const player = {
             id: user.id,
+            idFaction: factionClicked.id,
             name: user.username,
-            faction: factionClicked.name
+            faction: factionClicked.name,
+            color: factionClicked.color,
+            pic: factionClicked.pic,
         }
         this.props.addPlayer(player);
         this.setState({ 
@@ -74,8 +107,74 @@ class NewGame extends React.Component {
         this.handleHideModal();
     }
 
+    handleAddFriend = () => {
+        const {factionClicked, friendFromQuery} = this.state;
+        const friend = {
+            id: friendFromQuery.id,
+            idFaction: factionClicked.id,
+            name: friendFromQuery.username,
+            faction: factionClicked.name,
+            color: factionClicked.color,
+            pic: factionClicked.pic,
+        }
+        this.props.addPlayer(friend);
+        this.setState({
+            remainingFactions: [...this.state.remainingFactions.filter(faction => faction.name !== factionClicked.name)],
+            friendFromQuery: null,
+            value: '',
+        });
+        this.handleHideModal();
+    }
+
+    handleRemovePlayer = (player) => {
+        const { remainingFactions } = this.state;
+        this.props.removePlayer(player.id);
+        const factionReturned = {
+            id: player.idFaction,
+            name: player.faction,
+            color: player.color,
+            pic: player.pic,
+        }
+        this.setState({
+            remainingFactions: [...remainingFactions, factionReturned],
+        });
+    }
+
+    handleChange = async (e) => {
+        await this.setState({ [e.target.name]: e.target.value });
+        if (this.state.value.length) {
+            let friendFromQuery = await this.state.friendsWithInfos.find(friend => friend.username === this.state.value);
+            if (friendFromQuery) {
+                await this.setState({ friendFromQuery });
+            } else {
+                await this.setState({ friendFromQuery: null });
+            }
+        } else {
+            await this.setState({ friendFromQuery: null });
+        }
+    }
+
+    handleLaunchGame = async () => {
+        const uuid = uuidv4();
+        await this.setState({ loading: true });
+        await firestore.collection('users').doc(this.state.user.id).collection('games')
+            .doc(uuid).set({
+                id: uuid,
+                creation: new Date(),
+                players: this.props.game,
+                isReady: false,
+            });
+        await this.props.history.push(`/game/${uuid}`);
+    }
+
     
     render() {
+
+        const sortByFactionId = (a, b) => {
+            if (a.id > b.id) return 1;
+            if (b.id > a.id) return -1;
+            return 0;
+        }
 
         const { Meta } = Card;
         const { user } = this.state;
@@ -96,10 +195,11 @@ class NewGame extends React.Component {
                             type="primary" 
                             id="next-page-button"
                             disabled={game.length < 2}
+                            onClick={this.handleLaunchGame}
                         >
-                            Répartissez les régions
+                            Commencer la partie !
                         </Button>
-                        <div id="new-game-header">
+                        <div loading={this.state.loading} id="new-game-header">
                             <h2>Lancer une nouvelle partie</h2>
                             <Button
                                 onClick={() => this.props.history.push('/')}
@@ -115,10 +215,10 @@ class NewGame extends React.Component {
                                 De 2 à 5 joueurs.<br />Invitez vos amis pour des parties épiques.
                             </p>
                             <div id="houses">
-                                {this.state.remainingFactions.map(faction => {
+                                {this.state.remainingFactions.sort(sortByFactionId).map(faction => {
                                     return (
                                         <Card
-                                        key={faction.name}
+                                            key={faction.name}
                                             hoverable
                                             style={{ width: 170, margin: '10px'}}
                                             cover={<img alt="example" src={faction.pic} />}
@@ -134,7 +234,7 @@ class NewGame extends React.Component {
                                     footer={null}
                                     >
                                     {!userHasFaction ?
-                                        <div>
+                                        <div style={{ height: '100%' }}>
                                             <p style={{ textAlign: 'center', fontWeight: 'bold' }}>
                                                 {`Etes-vous sur de vouloir jouer la maison ${this.state.factionClicked.name} ?`}
                                             </p>
@@ -152,11 +252,47 @@ class NewGame extends React.Component {
                                                     Non
                                                 </Button>
                                             </div>
-                                        </div> : null
+                                        </div> : 
+                                        <div id="add-friend-to-game">
+                                            <h3>{`Choisir un ami pour jouer la maison ${this.state.factionClicked.name}`}</h3>
+                                            <Input 
+                                                width='100%' 
+                                                style={{ marginTop: '10px' }}
+                                                placeholder="Ajoutez vos amis à la partie"
+                                                name="value"
+                                                onChange={this.handleChange}
+                                                value={this.state.value}
+                                            />
+                                            {this.state.friendFromQuery 
+                                                ? <div onClick={this.handleAddFriend} id='query-result'>
+                                                    {this.state.friendFromQuery.username}
+                                                </div> : null
+                                            }
+                                        </div>
                                     }
                                 </Modal>
                             </div>
-                            {!userHasFaction ? <h2 style={{ textAlign: 'center' }}>Choisissez votre faction</h2> : null}
+                            {!userHasFaction ? 
+                                <h2 style={{ textAlign: 'center' }}>Choisissez votre maison</h2> 
+                                : <h2 style={{ textAlign: 'center' }}>Ajoutez d'autres joueurs</h2>
+                        
+                            }
+                            <div id="game-current-players">
+                                {this.props.game.map(player => {
+                                    return (
+                                        <div key={player.id} id="current-player-card" style={{ border: `2px solid ${player.color}` }}>
+                                            <h2>{`${player.name}`}</h2>
+                                            <p>{`maison ${player.faction}`}</p>
+                                            <Button 
+                                                icon={<DeleteOutlined />}
+                                                style={{ position: 'absolute', top: -15, right: -15 }}
+                                                shape="circle"
+                                                onClick={() => this.handleRemovePlayer(player)}
+                                            />
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>  
                 </div>

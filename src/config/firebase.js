@@ -173,4 +173,15 @@ export const getUserGames = async (uid) => {
     }
  }
 
+ // get the current game
+ export const getCurrentGame = async (userId, gameId) => {
+     const currentGame = await firestore.collection('users').doc(userId).collection('games')
+        .doc(gameId).get();
+    if (currentGame) {
+        return currentGame.data();
+    } else {
+        return null;
+    }
+ }
+
 

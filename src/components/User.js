@@ -112,6 +112,7 @@ class User extends React.Component {
                                     style={{ marginTop: '10px' }}
                                     type="primary"
                                     icon={<UploadOutlined />}
+                                    disabled={!this.state.image}
                                 >
                                     Modifier
                                 </Button>
