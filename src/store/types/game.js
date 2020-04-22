@@ -1,0 +1,2 @@
+export const ADD_PLAYER_TO_GAME = 'game/ADD_PLAYER_TO_GAME';
+export const REMOVE_PLAYER_FROM_GAME = 'game/REMOVE_PLAYER_FROM_GAME';

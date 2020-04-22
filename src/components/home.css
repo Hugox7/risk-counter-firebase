@@ -8,23 +8,29 @@
 #home {
     min-height: 100%;
     padding: 20px 0px;
-    background-color: white;
+    /* background-color: black; */
 }
 
 #home-header {
-    min-height: 80px;
+    min-height: 100px;
     border-radius: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
+    background-color: #3A3E49;
+    position: relative;
+    margin-bottom: 30px;
+    border: 1px #FFBA50 solid;
 }
 
 #home-header h2 {
-    font-size: 28px;
+    font-size: 25px;
+    font-weight: bold;
     margin: 0;
-    color: #3A3E49;
+    color: white;
     margin: 0px 15px 10px 0px;
+    padding-left: 20px;
 }
 
 .games {
@@ -33,7 +39,8 @@
     background-color: #3A3E49;
     padding: 10px;
     flex-wrap: wrap;
-    box-shadow: 7px 7px 10px lightgrey;
+    border-radius: 5px;
+    border: 1px solid #FFBA50;
 }
 
 .games h3 {
@@ -46,9 +53,13 @@
     justify-content: space-between;
 }
 
-/* .new-game-button {
+.new-game-button {
     background-color: #D92738;
     border: #D92738 solid 1px;
+    position: absolute;
+    left: 50%;
+    margin-left: -78px;
+    bottom: -18px;
 }
 
 .new-game-button:hover {
@@ -69,3 +80,14 @@
     width: 45px;
 }
 
+#home-logo-wrapper {
+    height: 100px;
+    position: absolute;
+    left: 50%;
+    margin-left: -115px;
+    bottom: 8px;
+}
+
+#home-logo-wrapper img {
+    height: 100%;
+}

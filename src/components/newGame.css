@@ -1,0 +1,59 @@
+#new-game {
+    height: 100%;
+    padding: 4vw;
+}
+
+#new-game-content {
+    min-height: 100%;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+#new-game-header {
+    height: 80px;
+    background-color: #F3F3F3;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#new-game-header h2 {
+    font-weight: bold;
+    color: #3A3E49;
+}
+
+#new-game-form {
+    padding: 20px;
+}
+
+#new-game-form .ant-card-body {
+    padding: 10px 20px;
+    height: 60px;
+}
+
+#new-game-form .ant-card-meta-title {
+    font-weight: bold;
+}
+
+#new-game-form .ant-card-cover {
+    height: 212px;
+    overflow: hidden;
+}
+
+#houses {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#next-page-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+
+    

@@ -10,6 +10,7 @@ import PasswordReset from './components/PasswordReset';
 import User from './components/User';
 import Game from './components/Game';
 import Friends from './components/Friends';
+import NewGame from './components/NewGame';
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
                 <Route path='/user/:id' component={User} />
                 <Route path='/game/:id' component={Game} />
                 <Route path='/my-friends' component={Friends} />
+                <Route path='/new-game' component={NewGame} />
             </Switch>
         </div>
       

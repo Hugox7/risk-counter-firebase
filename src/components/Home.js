@@ -6,8 +6,8 @@ import { Spin, Button, Row, Col, Tooltip, Avatar, Badge } from 'antd';
 import { Link } from 'react-router-dom';
 
 import './home.css';
-import NewGameModal from './NewGameModal';
 import ProfileDrawer from './ProfileDrawer';
+import risk from '../assets/risk2.png';
 
 class Home extends React.Component {
     static contextType = UserContext;
@@ -15,7 +15,6 @@ class Home extends React.Component {
     state = {
         user: null,
         games: [],
-        showModal: false,
         showDrawer: false,
         notifs: [],
     }
@@ -28,14 +27,6 @@ class Home extends React.Component {
         this.setState({ user, games, notifs });
         console.log(this.state);
     } 
-
-    handleShowModal = () => {
-        this.setState({ showModal: true });
-    }
-
-    handleHideModal = () => {
-        this.setState({ showModal: false });
-    }
 
     handleShowDrawer = () => {
         this.setState({ showDrawer: true });
@@ -58,8 +49,11 @@ class Home extends React.Component {
                 <div id="home">
                     <Row>
                         <Col span={22} offset={1}>
-                            <div id="home-header">
+                            <div id="home-header"> 
                                 <h2>{`Welcome ${user.username}`}</h2>
+                                <div id="home-logo-wrapper">
+                                    <img src={risk} alt="risk-logo" />
+                                </div>
                                 <div>
                                     <Badge count={count}>
                                         <Button  
@@ -68,6 +62,7 @@ class Home extends React.Component {
                                             icon={<MenuOutlined />}
                                             className="menu-button"
                                             onClick={this.handleShowDrawer}
+                                            style={{ marginRight: '20px' }}
                                         />
                                     </Badge>
                                     <ProfileDrawer 
@@ -76,25 +71,15 @@ class Home extends React.Component {
                                         user={user}
                                         notifs={notifs}
                                     />
+                                    <Button 
+                                        className="new-game-button" 
+                                        type="primary"
+                                        onClick={() => this.props.history.push('/new-game')}
+                                        shape="round"
+                                        size="large"
+                                    >Nouvelle partie</Button>      
                                 </div>
                             </div>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col offset={1}>
-                            <Button 
-                                icon={<PlusOutlined />} 
-                                className="new-game-button" 
-                                type="primary"
-                                onClick={this.handleShowModal}
-                            >
-                                Nouvelle partie
-                            </Button>
-                            <NewGameModal 
-                                visible={this.state.showModal}
-                                onClose={this.handleHideModal}
-                                user={user}
-                            />
                         </Col>
                     </Row>
                     <Row gutter={32}>
