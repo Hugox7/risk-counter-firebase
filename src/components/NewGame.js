@@ -160,7 +160,7 @@ class NewGame extends React.Component {
         await firestore.collection('users').doc(this.state.user.id).collection('games')
             .doc(uuid).set({
                 id: uuid,
-                creation: new Date(),
+                creation: Date.now(),
                 players: this.props.game,
                 isReady: false,
             });

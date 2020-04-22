@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spin } from 'antd';
+import { Spin, Button } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { getUserDocument, getCurrentGame } from '../config/firebase';
 import { UserContext } from '../providers/userProvider';
@@ -32,8 +32,19 @@ class Game extends React.Component {
         if (this.state.loading) {
             const antIcon = <LoadingOutlined style={{ fontSize: 40 }} spin />;
             return <div id='game-loading'><Spin indicator={antIcon} /></div>
+        } else if (!this.state.game) {
+            return (
+                <div id='no-game'>
+                    <h1>Cette partie n'existe pas ou plus</h1>
+                    <Button type="primary" onClick={() => this.props.history.push('/new-game')}>
+                        Retour à la création de partie
+                    </Button>
+                </div>
+            ); 
+        } else if (!this.state.game.isReady) {
+            return <div>game not ready</div>
         } else {
-            return <div>Gameessssss</div>
+            return <div>game ready !!!</div>
         }
     }
 

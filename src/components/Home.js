@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 import './home.css';
 import ProfileDrawer from './ProfileDrawer';
+import GameCard from './GameCard';
 import risk from '../assets/risk2.png';
 
 class Home extends React.Component {
@@ -84,8 +85,8 @@ class Home extends React.Component {
                     </Row>
                     <Row gutter={32}>
                         <Col 
-                            xl={{ span: 11, offset: 1 }}
-                            lg={{ span: 11, offset: 1 }}
+                            xl={{ span: 15, offset: 1 }}
+                            lg={{ span: 15, offset: 1 }}
                             md={{ span: 22, offset: 1 }}
                             sm={{ span: 22, offset: 1 }}
                             xs={{ span: 22, offset: 1 }}
@@ -95,16 +96,22 @@ class Home extends React.Component {
                                     <h3>Mes parties en cours</h3>
                                 </div>
                                 <div id="current-games-content">
-                                    {!games.length ?
+                                    {!games.length 
+                                        ?
                                         <p>Vous n'avez aucune partie en cours</p>
-                                        : <div>Games</div>
+                                        : 
+                                        <div>
+                                            {games.map(game => {
+                                                return <GameCard key={game.id} game={game} history={this.props.history} />
+                                            })}
+                                        </div>
                                     }
                                 </div>
                             </div>
                         </Col>
                         <Col 
-                            xl={{ span: 11, offset: 0 }}
-                            lg={{ span: 11, offset: 0 }}
+                            xl={{ span: 7, offset: 0 }}
+                            lg={{ span: 7, offset: 0 }}
                             md={{ span: 22, offset: 1 }}
                             sm={{ span: 22, offset: 1 }}
                             xs={{ span: 22, offset: 1 }}

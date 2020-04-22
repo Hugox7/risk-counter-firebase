@@ -36,16 +36,15 @@
 .games {
     margin-top: 25px;
     min-height: 500px;
-    background-color: #3A3E49;
+    background-color: white;
     padding: 10px;
     flex-wrap: wrap;
     border-radius: 5px;
-    border: 1px solid #FFBA50;
+    /* border: 2px solid #FFBA50; */
 }
 
 .games h3 {
     font-size: 20px;
-    color: white;
 }
 
 .current-games-header {

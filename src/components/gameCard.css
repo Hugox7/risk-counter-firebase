@@ -1,0 +1,18 @@
+#game-card {
+    background-color: #f3f3f3;
+    cursor: pointer;
+    padding: 10px;
+    height: 180px;
+    width: 320px;
+    border-radius: 5px;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    border: 1px dotted #3A3E49;
+}
+
+#game-card:hover {
+    box-shadow: 5px 5px 10px lightgray;
+}
