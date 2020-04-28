@@ -22,6 +22,10 @@ export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 export const storage = firebase.storage();
 
+
+//// FIREBASE METHODS : ////
+
+
 // sign in with google
 const provider = new firebase.auth.GoogleAuthProvider();
 export const signInWithGoogle = () => {
@@ -70,15 +74,29 @@ const updateDisplayName = async (displayName) => {
 
 //get user games
 export const getUserGames = async (uid) => {
-    const userGames = await firestore.collection('users').doc(uid).collection('games').get();
-    if (!userGames) return [];
     let games = [];
-    userGames.forEach(game => games.push(game.data()));
+    try {
+        const userGames = await firestore.collection('games').where('creator', '==', uid).get();
+        const gamesAsGuest = await firestore.collection('games').where('guests', 'array-contains', uid).get();
+        if (userGames.docs.length) {
+            userGames.docs.forEach(doc => {
+                return games.push(doc.data());
+            });
+        }
+        if (gamesAsGuest.docs.length) {
+            gamesAsGuest.docs.forEach(doc => {
+                return games.push(doc.data());
+            });
+        }
+    
+    } catch (error) {
+        console.log(error)
+    }
     return games;
- }
+}
 
- //get user from query search
- export const getUserQuery = async (query) => {
+//get user from query search
+export const getUserQuery = async (query) => {
     let response = [];
     let snapshot = await firestore.collection('users').where('username', '==', query).get();
     if (snapshot.docs.length) {
@@ -87,7 +105,7 @@ export const getUserGames = async (uid) => {
         });
     }
     return response;
- }
+}
 
  // send friend request to user
  export const sendFriendRequest = async (uid, content) => {
@@ -174,14 +192,32 @@ export const getUserGames = async (uid) => {
  }
 
  // get the current game
- export const getCurrentGame = async (userId, gameId) => {
-     const currentGame = await firestore.collection('users').doc(userId).collection('games')
-        .doc(gameId).get();
+ export const getCurrentGame = async (gameId) => {
+     const currentGame = await firestore.collection('games').doc(gameId).get();
     if (currentGame) {
         return currentGame.data();
     } else {
         return null;
     }
  }
+
+ //get checkbox array
+ export const getCheckBoxArray = async (userId, gameId) => {
+    let checkboxArray = [];
+    const regionsRef = await firestore.collection(`games`).doc(gameId).collection('regions').get();
+    regionsRef.forEach(elem => {
+        return checkboxArray.push({ label: elem.data().name, value: elem.data().name });
+    })
+    return checkboxArray;
+ }
+
+ //get players from game
+ export const getGamePlayers = async (gameId) => {
+    let playersArray = [];
+    const playersRef = await firestore.collection(`games`).doc(gameId).collection('players').get();
+    playersRef.forEach(player => playersArray.push(player.data()));
+    return playersArray;
+ }
+
 
 

@@ -1,5 +1,8 @@
 import React from 'react';
-import { getUserDocument, getUserGames, getUserNotifications } from '../config/firebase';
+import {getUserDocument, 
+        getUserGames,  
+        getUserNotifications, 
+} from '../config/firebase';
 import { UserContext } from '../providers/userProvider';
 import { LoadingOutlined, UserOutlined, PlusOutlined, MenuOutlined } from '@ant-design/icons';
 import { Spin, Button, Row, Col, Tooltip, Avatar, Badge } from 'antd';
@@ -20,14 +23,20 @@ class Home extends React.Component {
         notifs: [],
     }
 
-    async componentDidMount() {
+    componentDidMount = async () => {
         const userId = this.context.uid;
         const user = await getUserDocument(userId);
-        const games = await getUserGames(userId);
         const notifs = await getUserNotifications(userId);
-        this.setState({ user, games, notifs });
+        const games =  await getUserGames(userId);
+
+        this.setState({ 
+            user, 
+            notifs,
+            games,
+        });
         console.log(this.state);
-    } 
+    }
+
 
     handleShowDrawer = () => {
         this.setState({ showDrawer: true });
@@ -100,7 +109,7 @@ class Home extends React.Component {
                                         ?
                                         <p>Vous n'avez aucune partie en cours</p>
                                         : 
-                                        <div>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                                             {games.map(game => {
                                                 return <GameCard key={game.id} game={game} history={this.props.history} />
                                             })}

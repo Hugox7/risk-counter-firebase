@@ -1,6 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import 'moment/locale/fr';
+import { firestore } from '../config/firebase';
 
 import './gameCard.css';
 
@@ -21,7 +22,9 @@ const GameCard = ({ game, history }) => {
             onClick={handleRedirect}
         >
             <h3>{date}</h3>
+            <p>{`Créé par : ${game.creatorName}`}</p>
             <p>{`Statut : ${statut}`}</p>
+            <p>{`Nombre de joueurs : ${game.guests.length + 1}`}</p>
         </div>
     )
 }

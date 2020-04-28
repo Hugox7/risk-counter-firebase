@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { UserContext } from '../providers/userProvider';
 import { getUserDocument, getUserFriends, firestore } from '../config/firebase';
 import * as gameTypes from '../store/types/game';
+import { regions as regionsArray } from '../regions/regions';
 
 import './newGame.css';
 
@@ -155,15 +156,32 @@ class NewGame extends React.Component {
     }
 
     handleLaunchGame = async () => {
+        let guests = [];
         const uuid = uuidv4();
+        const gameRef =  firestore.collection('games').doc(uuid);
         await this.setState({ loading: true });
-        await firestore.collection('users').doc(this.state.user.id).collection('games')
-            .doc(uuid).set({
+        await gameRef.set({
                 id: uuid,
                 creation: Date.now(),
-                players: this.props.game,
+                creator: this.state.user.id,
+                creatorName: this.state.user.username,
                 isReady: false,
+                
             });
+        await this.props.game.forEach(async elem => {
+            await gameRef.collection('players').doc(elem.id).set(elem);
+        });
+        await regionsArray.forEach(async item => {
+            await gameRef.collection('regions').doc(item.name).set(item);
+        });
+        await this.props.game.forEach(async elem => {
+            if (elem.id !== this.state.user.id) {
+                guests.push(elem.id);
+            } 
+        });
+        await gameRef.update({
+            guests
+        });
         await this.props.history.push(`/game/${uuid}`);
     }
 
@@ -196,6 +214,7 @@ class NewGame extends React.Component {
                             id="next-page-button"
                             disabled={game.length < 2}
                             onClick={this.handleLaunchGame}
+                            loading={this.state.loading}
                         >
                             Commencer la partie !
                         </Button>
