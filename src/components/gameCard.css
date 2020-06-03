@@ -9,7 +9,8 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: flex-start;    
+    align-items: flex-start;
+    box-shadow: 5px 5px 10px lightgray;
 }
 
 #game-card h3 {

@@ -202,7 +202,7 @@ export const getUserQuery = async (query) => {
  }
 
  //get checkbox array
- export const getCheckBoxArray = async (userId, gameId) => {
+ export const getCheckBoxArray = async (gameId) => {
     let checkboxArray = [];
     const regionsRef = await firestore.collection(`games`).doc(gameId).collection('regions').get();
     regionsRef.forEach(elem => {
@@ -218,6 +218,7 @@ export const getUserQuery = async (query) => {
     playersRef.forEach(player => playersArray.push(player.data()));
     return playersArray;
  }
+
 
 
 

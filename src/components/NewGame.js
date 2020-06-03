@@ -165,11 +165,22 @@ class NewGame extends React.Component {
                 creation: Date.now(),
                 creator: this.state.user.id,
                 creatorName: this.state.user.username,
-                isReady: false,
-                
+                isReady: false,        
             });
+        
         await this.props.game.forEach(async elem => {
-            await gameRef.collection('players').doc(elem.id).set(elem);
+            if (this.props.game.length === 2) {
+                await gameRef.collection('players').doc(elem.id).set({...elem, max: 18});
+            } else if (this.props.game.length > 2 && this.props.game.length < 5) {
+                await gameRef.collection('players').doc(elem.id).set({...elem, max: Math.round(48 / this.props.game.length)});
+            } else {
+                if (elem.id === this.props.game[3].id || elem.id === this.props.game[4].id) {
+                    await gameRef.collection('players').doc(elem.id).set({...elem, max: 9});
+                } else {
+                    await gameRef.collection('players').doc(elem.id).set({...elem, max: 10});
+                }
+            }
+            
         });
         await regionsArray.forEach(async item => {
             await gameRef.collection('regions').doc(item.name).set(item);
@@ -177,7 +188,7 @@ class NewGame extends React.Component {
         await this.props.game.forEach(async elem => {
             if (elem.id !== this.state.user.id) {
                 guests.push(elem.id);
-            } 
+            }
         });
         await gameRef.update({
             guests

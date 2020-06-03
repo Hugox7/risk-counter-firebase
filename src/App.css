@@ -7,3 +7,10 @@
   background-size: cover;
   background-attachment: fixed;
 }
+
+*{
+  -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
+  display: none;
+}
